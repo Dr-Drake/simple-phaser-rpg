@@ -15,20 +15,21 @@ export class Score extends Text {
 
     public changeValue(operation: ScoreOperations, value: number): void {
         switch (operation) {
-        case ScoreOperations.INCREASE:
-            this.scoreValue += value;
-            break;
-        case ScoreOperations.DECREASE:
-            this.scoreValue -= value;
-            break;
-        case ScoreOperations.SET_VALUE:
-            this.scoreValue = value;
-            break;
-        default:
-            break;
+            case ScoreOperations.INCREASE:
+                this.scoreValue += value;
+                break;
+            case ScoreOperations.DECREASE:
+                this.scoreValue -= value;
+                break;
+            case ScoreOperations.SET_VALUE:
+                this.scoreValue = value;
+                break;
+            default:
+                break;
         }
         this.setText(`Score: ${this.scoreValue}`);
     }
+    
     public getValue(): number {
         return this.scoreValue;
     }

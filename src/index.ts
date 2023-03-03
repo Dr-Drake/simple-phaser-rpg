@@ -1,5 +1,5 @@
 import { Game, Types } from 'phaser';
-import { Level1, LoadingScene } from './scenes';
+import { Level1, LoadingScene, UIScene } from './scenes';
 
 // Types
 declare global{
@@ -56,7 +56,7 @@ const gameConfig: Types.Core.GameConfig = {
     audio: {
         disableWebAudio: false,
     },
-    scene: [LoadingScene, Level1],
+    scene: [LoadingScene, Level1, UIScene],
 };
 
 window.game = new Game(gameConfig);
