@@ -13,6 +13,9 @@ npm run dev
 
 Then go to http://localhost:5000 to play the game.
 
+## Inspiration
+https://shakuro.com/blog/phaser-js-a-step-by-step-tutorial-on-making-a-phaser-3-game#part-1
+
 ## Stay in touch
 
 - Author - [Ikem Ezechukwu](ikem.ezechukwu@outlook.com)
