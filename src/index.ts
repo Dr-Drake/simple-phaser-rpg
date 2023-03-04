@@ -9,6 +9,10 @@ declare global{
     }
 }
 
+type GameConfigExtended = Types.Core.GameConfig & {
+    winScore: number;
+};
+
 window.sizeChanged = () => {
     if (window.game.isBooted) {
       setTimeout(() => {
@@ -26,7 +30,7 @@ window.onresize = () => window.sizeChanged();
 /**
  * To declare a game, we need to indicate what parameters we’ll launch it with.
  */
-const gameConfig: Types.Core.GameConfig = {
+export const gameConfig: GameConfigExtended = {
 	title: 'Phaser game tutorial',
     type: Phaser.WEBGL,
     parent: 'game',
@@ -56,6 +60,7 @@ const gameConfig: Types.Core.GameConfig = {
     audio: {
         disableWebAudio: false,
     },
+    winScore: 40,
     scene: [LoadingScene, Level1, UIScene],
 };
 

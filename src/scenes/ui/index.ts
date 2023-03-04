@@ -2,6 +2,7 @@ import { Scene } from 'phaser';
 import { EVENTS_NAME, GameStatus } from '../../consts';
 import { Score, ScoreOperations } from '../../classes/score';
 import { Text } from "../../classes/text";
+import { gameConfig } from '../../index'
 
 export class UIScene extends Scene {
     private score!: Score;
@@ -15,6 +16,11 @@ export class UIScene extends Scene {
         // Add 10 points for every chest interaction
         this.chestLootHandler = () => {
             this.score.changeValue(ScoreOperations.INCREASE, 10);
+
+            // If you have enough points, you win!
+            if (this.score.getValue() === gameConfig.winScore) {
+                this.game.events.emit(EVENTS_NAME.GAME_END, GameStatus.WIN);
+            }
         };
 
         this.gameEndHandler = (status) => {
