@@ -1,13 +1,16 @@
 import { Scene, Tilemaps } from 'phaser';
 import { gameObjectsToObjectPoints } from '../../helpers/gameobject-to-object-point';
 import { Player } from '../../classes/player';
+import { EVENTS_NAME } from '../../consts';
+import { Enemy } from '../../classes/enemy';
 
 export class Level1 extends Scene {
     private player!: Player;
+    private enemies!: Enemy[];
 
     private map!: Tilemaps.Tilemap;
     private tileset?: Tilemaps.Tileset;
-    private wallsLayer?: Tilemaps.TilemapLayer;
+    private wallsLayer!: Tilemaps.TilemapLayer;
     private groundLayer?: Tilemaps.TilemapLayer;
 
     private chests!: Phaser.GameObjects.Sprite[];
@@ -44,31 +47,64 @@ export class Level1 extends Scene {
     // Initialize chests
     private initChests(): void {
 
-        /**
-         * Using the this.map.filterObjects() function, 
-         * select the required objects from the required layer. 
-         */
-        const chestPoints = gameObjectsToObjectPoints(
-          this.map.filterObjects('Chests', obj => obj.name === 'ChestPoint'),
-        );
+      /**
+       * Using the this.map.filterObjects() function, 
+       * select the required objects from the required layer. 
+       */
+      const chestPoints = gameObjectsToObjectPoints(
+        this.map.filterObjects('Chests', obj => obj.name === 'ChestPoint'),
+      );
 
-        // Create a sprite with a physical model
-        // 595 is the sprite's ID
-        this.chests = chestPoints.map(chestPoint =>
-          this.physics.add.sprite(chestPoint.x, chestPoint.y, 'tiles_spr', 595).setScale(1.5),
-        );
+      // Create a sprite with a physical model
+      // 595 is the sprite's ID
+      this.chests = chestPoints.map(chestPoint =>
+        this.physics.add.sprite(chestPoint.x, chestPoint.y, 'tiles_spr', 595).setScale(1.5),
+      );
 
-        /** 
-         * When there is an overlap with the player and the chest
-         * destroy the chest and flash the camera
-         */
-        this.chests.forEach(chest => {
-          this.physics.add.overlap(this.player, chest, (obj1, obj2) => {
-            obj2.destroy();
-            this.cameras.main.flash();
-          });
+      /** 
+       * When there is an overlap with the player and the chest
+       * destroy the chest and flash the camera
+       */
+      this.chests.forEach(chest => {
+        this.physics.add.overlap(this.player, chest, (obj1, obj2) => {
+
+          // Emit event for chest interaction
+          this.game.events.emit(EVENTS_NAME.CHEST_LOOT);
+          obj2.destroy();
+          this.cameras.main.flash();
         });
-      }
+      });
+    }
+
+    // Initialize enemies
+    private initEnemies(): void {
+
+      /**
+       * Using the this.map.filterObjects() function, 
+       * select the required objects from the required layer. 
+      */
+      const enemiesPoints = gameObjectsToObjectPoints(
+        this.map.filterObjects('Enemies', (obj) => obj.name === 'EnemyPoint'),
+      );
+
+      // Create the enimy sprites 
+      this.enemies = enemiesPoints.map((enemyPoint) =>
+        new Enemy(this, enemyPoint.x, enemyPoint.y, 'tiles_spr', this.player, 503)
+          .setName(enemyPoint.id.toString())
+          .setScale(1.5),
+      );
+
+      /**
+       * Enemies should collide with wallsm other enemies, and the player
+       * If they do collide with the player, the player gets a damage of 1,
+       * taken from his hp.
+       */
+      this.physics.add.collider(this.enemies, this.wallsLayer);
+      this.physics.add.collider(this.enemies, this.enemies);
+      this.physics.add.collider(this.player, this.enemies, (obj1, obj2) => {
+        (obj1 as Player).getDamage(1);
+      });
+    }
 
     private showDebugWalls(): void {
         const debugGraphics = this.add.graphics().setAlpha(0.7);
@@ -91,6 +127,9 @@ export class Level1 extends Scene {
 
         // Load Chests
         this.initChests();
+
+        // Load Enemies
+        this.initEnemies();
 
         this.initCamera();
 
