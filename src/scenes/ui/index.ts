@@ -41,7 +41,19 @@ export class UIScene extends Scene {
               this.game.scale.width / 2 - this.gameEndPhrase.width / 2,
               this.game.scale.height * 0.4,
             );
-          };
+
+            /**
+             * When the mouse is clicked
+             * The even listeners are turned off
+             * and the level 1 scene is restarted 
+             */
+            this.input.on('pointerdown', () => {
+                this.game.events.off(EVENTS_NAME.CHEST_LOOT, this.chestLootHandler);
+                this.game.events.off(EVENTS_NAME.GAME_END, this.gameEndHandler);
+                this.scene.get('level-1-scene').scene.restart();
+                this.scene.restart();
+            });
+        };
     }
 
     // Initialize event listeners

@@ -45,6 +45,14 @@ export class Player extends Actor {
          */
         this.getBody().setSize(30, 30);
         this.getBody().setOffset(8, 0);
+
+        /**
+         * When the object is destroyed on scene restart
+         * remove all keystroke listeners
+         */
+        this.on('destroy', () => {
+            this.keySpace.removeAllListeners();
+        });
     }
 
     private initAnimations(): void {
